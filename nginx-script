@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#Устанавливаем nginx
+
+pac=`dpkg-query -l | grep 'nginx '` 
+#Проверяем установился ли пакет 
+if [ -z "$pac" ]
+then
+	echo "Пакет nginx не установлен. Идем ставить"
+apt install nginx -y
+else 
+	echo "Пакет nginx успешно установлен"
+fi
+#Ставим репозиторий git
+git=`ls -al /etc/nginx/ | grep .git`
+if [ -z "$git" ]
+then
+        echo "Репозиторий git не стоит. Идем ставить"
+cd /etc/nginx/
+pwd
+git init 
+git config --global user.name "Alex Borovets"
+git config --global user.email tkaa@reso-med.com
+git add nginx.conf
+git add sites-available/
+git add sites-enabled/
+git commit -m 'Конфиги nginx'
+git config pull.rebase true
+git pull https://github.com/otuskurs/nginx_all_conf.git
+git rebase --skip
+else
+        echo "Репозиторий git установлен"
+fi
+
